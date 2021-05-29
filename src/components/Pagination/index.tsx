@@ -1,4 +1,3 @@
-import { Button } from "@chakra-ui/button";
 import { Box, Stack } from "@chakra-ui/layout";
 import { PaginationItem } from "./PaginationItem";
 
