@@ -6,7 +6,7 @@ import {
   HStack,
   SimpleGrid,
   VStack,
-  Button
+  Button,
 } from "@chakra-ui/react";
 import React from "react";
 import { Input } from "../../components/Form/Input";
@@ -21,17 +21,17 @@ export default function UserList() {
       <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <Sidebar />
 
-        <Box flex="1" borderRadius={8} bg="gray.800" p="8">
+        <Box flex="1" borderRadius={8} bg="gray.800" p={["6", "8"]}>
           <Heading size="lg" fontWeight="normal">
             Criar Usuário
           </Heading>
           <Divider my="6" borderColor="gray.700" />
           <VStack spacing="8">
-            <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} width="100%">
               <Input name="name" label="Nome completo" />
               <Input name="email" type="email" label="E-mail" />
             </SimpleGrid>
-            <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
+            <SimpleGrid minChildWidth="240px" spacing={["6", "8"]} width="100%">
               <Input name="password" type="password" label="Senha" />
               <Input
                 name="password_confirmation"

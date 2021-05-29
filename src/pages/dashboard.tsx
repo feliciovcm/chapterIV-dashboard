@@ -1,4 +1,5 @@
 import { Box, Flex, SimpleGrid, Text } from "@chakra-ui/layout";
+import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
@@ -11,7 +12,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 // Exemplo: Vou carregar um componente somente quando o usuario clicar em um botão.
 // Passando ssr: false, eu garato que o gráfico será renderizado somente pelo lado do browser,
 // e nunca pelo lado do servidor, garantindo seu funcionamento.
-const options = {
+const options: ApexOptions = {
   chart: {
     toolbar: {
       show: false,
