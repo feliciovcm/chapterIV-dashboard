@@ -1,8 +1,12 @@
+import { useEffect } from "react";
+import dynamic from "next/dynamic";
+
 import { Box, Flex, SimpleGrid, Text } from "@chakra-ui/layout";
 import { ApexOptions } from "apexcharts";
-import dynamic from "next/dynamic";
+
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+
 import { theme } from "../styles/theme";
 // Como o html da página no next é formado na camada intermediária. E o grafico da apexcharts é
 // formado somente no browser, no frontend. Importar da maneira comum, não vai dar certo, logo
@@ -62,6 +66,7 @@ const series = [
 ];
 
 export default function Dashboard() {
+  
   return (
     <Flex direction="column" h="100vh">
       <Header />

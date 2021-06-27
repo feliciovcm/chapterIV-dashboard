@@ -1,12 +1,22 @@
-import { Button } from "@chakra-ui/button";
-import { Checkbox } from "@chakra-ui/checkbox";
+import React from "react";
+
+import {
+  Spinner,
+  Button,
+  Checkbox,
+  Box,
+  Flex,
+  Heading,
+  Text,
+} from "@chakra-ui/react";
 import Icon from "@chakra-ui/icon";
-import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
 import { useBreakpointValue } from "@chakra-ui/media-query";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
+
+import { useQuery } from "react-query";
 import Link from "next/link";
-import React from "react";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
+
 import Header from "../../components/Header";
 import Pagination from "../../components/Pagination";
 import Sidebar from "../../components/Sidebar";
@@ -15,6 +25,25 @@ import Sidebar from "../../components/Sidebar";
 // muitas colunas o ideal é só colocar um scroll na tabela
 
 export default function UserList() {
+  const { data, isLoading, error } = useQuery("users", async () => {
+    const response = await fetch("http://localhost:3000/api/users");
+    const data = await response.json();
+
+    const users = data.users.map((user) => {
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: new Date(user.createdAt).toLocaleDateString("pt-BR", {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric'
+        }),
+      };
+    });
+    return users;
+  });
+
   const isWideScreen = useBreakpointValue({
     base: false,
     lg: true,
@@ -44,104 +73,63 @@ export default function UserList() {
               </Button>
             </Link>
           </Flex>
+          {isLoading ? (
+            <Flex justify="center">
+              <Spinner />
+            </Flex>
+          ) : error ? (
+            <Flex justify="center">
+              <Text>Falha ao carregar usuários</Text>
+            </Flex>
+          ) : (
+            <>
+              <Table colorScheme="whiteAlpha">
+                <Thead>
+                  <Tr>
+                    <Th px={["4", "4", "6"]}>
+                      <Checkbox colorScheme="orange" />
+                    </Th>
+                    <Th>usuários</Th>
+                    {isWideScreen && <Th>Data de cadastro</Th>}
 
-          <Table colorScheme="whiteAlpha">
-            <Thead>
-              <Tr>
-                <Th px={["4", "4", "6"]}>
-                  <Checkbox colorScheme="orange" />
-                </Th>
-                <Th>usuários</Th>
-                {isWideScreen && <Th>Data de cadastro</Th>}
-
-                {isWideScreen && <Th width="8"></Th>}
-              </Tr>
-            </Thead>
-            <Tbody>
-              <Tr>
-                <Td px={["4", "4", "6"]}>
-                  <Checkbox colorScheme="orange" />
-                </Td>
-                <Td>
-                  <Box>
-                    <Text fontWeight="bold">Vitor Felicio</Text>
-                    <Text fontSize="sm" color="gray.300">
-                      feliciovcm@gmail.com
-                    </Text>
-                  </Box>
-                </Td>
-                {isWideScreen && <Td>25 de Maio, 2021</Td>}
-                {isWideScreen && (
-                  <Td>
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="md"
-                      colorScheme="orange"
-                      leftIcon={<Icon as={RiPencilLine} />}
-                    >
-                      Editar
-                    </Button>
-                  </Td>
-                )}
-              </Tr>
-              <Tr>
-                <Td px={["4", "4", "6"]}>
-                  <Checkbox colorScheme="orange" />
-                </Td>
-                <Td>
-                  <Box>
-                    <Text fontWeight="bold">Vitor Felicio</Text>
-                    <Text fontSize="sm" color="gray.300">
-                      feliciovcm@gmail.com
-                    </Text>
-                  </Box>
-                </Td>
-                {isWideScreen && <Td>25 de Maio, 2021</Td>}
-                {isWideScreen && (
-                  <Td>
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="md"
-                      colorScheme="orange"
-                      leftIcon={<Icon as={RiPencilLine} />}
-                    >
-                      Editar
-                    </Button>
-                  </Td>
-                )}
-              </Tr>
-              <Tr>
-                <Td px={["4", "4", "6"]}>
-                  <Checkbox colorScheme="orange" />
-                </Td>
-                <Td>
-                  <Box>
-                    <Text fontWeight="bold">Vitor Felicio</Text>
-                    <Text fontSize="sm" color="gray.300">
-                      feliciovcm@gmail.com
-                    </Text>
-                  </Box>
-                </Td>
-                {isWideScreen && <Td>25 de Maio, 2021</Td>}
-                {isWideScreen && (
-                  <Td>
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="md"
-                      colorScheme="orange"
-                      leftIcon={<Icon as={RiPencilLine} />}
-                    >
-                      Editar
-                    </Button>
-                  </Td>
-                )}
-              </Tr>
-            </Tbody>
-          </Table>
-          <Pagination />
+                    {isWideScreen && <Th width="8"></Th>}
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {data.map((user) => (
+                    <Tr key={user.id}>
+                      <Td px={["4", "4", "6"]}>
+                        <Checkbox colorScheme="orange" />
+                      </Td>
+                      <Td>
+                        <Box>
+                          <Text fontWeight="bold">{user.name}</Text>
+                          <Text fontSize="sm" color="gray.300">
+                            {user.email}
+                          </Text>
+                        </Box>
+                      </Td>
+                      {isWideScreen && <Td>{user.createdAt}</Td>}
+                      {isWideScreen && (
+                        <Td>
+                          <Button
+                            as="a"
+                            size="sm"
+                            fontSize="md"
+                            colorScheme="orange"
+                            leftIcon={<Icon as={RiPencilLine} />}
+                          >
+                            Editar
+                          </Button>
+                        </Td>
+                      )}
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+              <Pagination />
+            </>
+          )}
         </Box>
       </Flex>
     </Box>
