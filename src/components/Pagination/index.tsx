@@ -55,7 +55,7 @@ export default function Pagination({
         {/* Lógica de exibição da primeira página */}
         {currentPage > 1 + siblingsCount && (
           <>
-            <PaginationItem number={1} />
+            <PaginationItem onPageChange={onPageChange} number={1} />
             {currentPage > 2 + siblingsCount && (
               <Text color="gray.300" textAlign="center" width="8">
                 ...
@@ -67,15 +67,31 @@ export default function Pagination({
         {/* Lógica de exibição das páginas anteriores */}
         {previousPages.length > 0 &&
           previousPages.map((page) => {
-            return <PaginationItem key={page} number={page} />;
+            return (
+              <PaginationItem
+                onPageChange={onPageChange}
+                key={page}
+                number={page}
+              />
+            );
           })}
         {/* Pagina atual */}
-        <PaginationItem number={currentPage} isCurrent />
+        <PaginationItem
+          onPageChange={onPageChange}
+          number={currentPage}
+          isCurrent
+        />
 
         {/* Lógica de exibição das próximas paginas */}
         {nextPages.length > 0 &&
           nextPages.map((page) => {
-            return <PaginationItem key={page} number={page} />;
+            return (
+              <PaginationItem
+                onPageChange={onPageChange}
+                key={page}
+                number={page}
+              />
+            );
           })}
 
         {/* Lógica de exibição da última página */}
@@ -86,7 +102,7 @@ export default function Pagination({
                 ...
               </Text>
             )}
-            <PaginationItem number={lastPage} />
+            <PaginationItem onPageChange={onPageChange} number={lastPage} />
           </>
         )}
       </Stack>

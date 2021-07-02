@@ -20,12 +20,15 @@ import Header from "../../components/Header";
 import Pagination from "../../components/Pagination";
 import Sidebar from "../../components/Sidebar";
 import { useUsers } from "../../services/hooks/useUsers";
+import { useState } from "react";
 
 // Lidar com responsividade com tabela é muito complicado, em caso de tabela com
 // muitas colunas o ideal é só colocar um scroll na tabela
 
 export default function UserList() {
-  const { data, isLoading, error, isFetching } = useUsers();
+  const [page, setPage] = useState(1);
+
+  const { data, isLoading, error, isFetching } = useUsers(page);
 
   const isWideScreen = useBreakpointValue({
     base: false,
@@ -82,7 +85,7 @@ export default function UserList() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {data.map((user) => (
+                  {data.users.map((user) => (
                     <Tr key={user.id}>
                       <Td px={["4", "4", "6"]}>
                         <Checkbox colorScheme="orange" />
@@ -114,9 +117,9 @@ export default function UserList() {
                 </Tbody>
               </Table>
               <Pagination
-                totalCountOfRegisters={200}
-                onPageChange={() => {}}
-                currentPage={16}
+                totalCountOfRegisters={data.totalCount}
+                onPageChange={setPage}
+                currentPage={page}
               />
             </>
           )}
