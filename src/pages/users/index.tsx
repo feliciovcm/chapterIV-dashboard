@@ -8,24 +8,28 @@ import {
   Flex,
   Heading,
   Text,
+  Link,
 } from "@chakra-ui/react";
 import Icon from "@chakra-ui/icon";
 import { useBreakpointValue } from "@chakra-ui/media-query";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 
-import Link from "next/link";
+import NextLink from "next/link";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 
 import Header from "../../components/Header";
 import Pagination from "../../components/Pagination";
 import Sidebar from "../../components/Sidebar";
-import { useUsers } from "../../services/hooks/useUsers";
+import { getUsers, useUsers } from "../../services/hooks/useUsers";
 import { useState } from "react";
+import { queryClient } from "../../services/queryClient";
+import { api } from "../../services/api";
+import { GetServerSideProps } from "next";
 
 // Lidar com responsividade com tabela é muito complicado, em caso de tabela com
 // muitas colunas o ideal é só colocar um scroll na tabela
 
-export default function UserList() {
+export default function UserList({ users }) {
   const [page, setPage] = useState(1);
 
   const { data, isLoading, error, isFetching } = useUsers(page);
@@ -34,6 +38,20 @@ export default function UserList() {
     base: false,
     lg: true,
   });
+
+  async function handlePreFetchUser(userId: string) {
+    await queryClient.prefetchQuery(
+      ["user", userId],
+      async () => {
+        const response = await api.get(`users/${userId}`);
+
+        return response.data;
+      },
+      {
+        staleTime: 1000 * 60 * 10, // 10 min
+      }
+    );
+  }
 
   return (
     <Box>
@@ -50,7 +68,7 @@ export default function UserList() {
                 <Spinner ml="4" size="sm" color="gray.500" />
               )}
             </Heading>
-            <Link href="/users/create" passHref>
+            <NextLink href="/users/create" passHref>
               <Button
                 as="a"
                 size="sm"
@@ -60,7 +78,7 @@ export default function UserList() {
               >
                 Criar novo
               </Button>
-            </Link>
+            </NextLink>
           </Flex>
           {isLoading ? (
             <Flex justify="center">
@@ -92,7 +110,12 @@ export default function UserList() {
                       </Td>
                       <Td>
                         <Box>
-                          <Text fontWeight="bold">{user.name}</Text>
+                          <Link
+                            color="green.400"
+                            onMouseEnter={() => handlePreFetchUser(user.id)}
+                          >
+                            <Text fontWeight="bold">{user.name}</Text>
+                          </Link>
                           <Text fontSize="sm" color="gray.300">
                             {user.email}
                           </Text>
@@ -128,3 +151,17 @@ export default function UserList() {
     </Box>
   );
 }
+
+// como o useUsers é um hook, e hooks só podem ser utilizados dentro de componentes
+// React. Então importaremos a função que faz a requisição, para integrar o
+// react-queries com a funcionalidade do next de server side rendering.
+
+// export const getServerSideProps: GetServerSideProps = async () => {
+//   // const { users, totalCount } = await getUsers(1);
+
+//   // return {
+//   //   props: {
+//   //     users,
+//   //   },
+//   // };
+// };

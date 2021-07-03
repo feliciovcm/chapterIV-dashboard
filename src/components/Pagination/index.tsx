@@ -39,6 +39,9 @@ export default function Pagination({
         )
       : [];
 
+  const initialCountOfUsers =
+    currentPage * registersPerPage - (registersPerPage - 1);
+  const endCountOfUsers = initialCountOfUsers + registersPerPage - 1;
   return (
     <Stack
       direction={["column", "row"]}
@@ -48,7 +51,9 @@ export default function Pagination({
       align="center"
     >
       <Box>
-        <strong>0</strong> - <strong>10</strong> de <strong>100</strong>
+        <strong>{initialCountOfUsers}</strong> -{" "}
+        <strong>{endCountOfUsers}</strong> de{" "}
+        <strong>{totalCountOfRegisters}</strong>
       </Box>
 
       <Stack direction="row" spacing="2">
